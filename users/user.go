@@ -1,12 +1,12 @@
-package main
+package users
 
 import "fmt"
 import "github.com/google/uuid"
 
 type User struct {
-	id       uuid.UUID
-	username string
-	password string
+	Id       uuid.UUID
+	Username string
+	Password string
 }
 
 func NewUser(id uuid.UUID, username string, password string) User {
@@ -15,5 +15,5 @@ func NewUser(id uuid.UUID, username string, password string) User {
 }
 
 func (u User) String() string {
-	return fmt.Sprintf("User {id: %s, username: %s}", u.id, u.username)
+	return fmt.Sprintf("User {Id: %s, Username: %s}", u.Id, u.Username)
 }
