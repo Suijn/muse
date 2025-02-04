@@ -1,4 +1,4 @@
-package tests
+package users
 
 import "testing"
 import "github.com/google/uuid"
