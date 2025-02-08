@@ -1,21 +1,24 @@
 package users
 
-import "context"
-import "fmt"
+import (
+	"context"
+	"fmt"
 
-import "github.com/jackc/pgx/v5"
-
-import "github.com/muse/settings"
+	"github.com/jackc/pgx/v5"
+	"github.com/muse/common/settings"
+)
 
 var createUsersTable string = `
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
 	id uuid PRIMARY KEY,
 	username varchar(255),
-	password varchar(255),
+	password varchar(255)
 );
 `
 
-func GetPsqlConnection(settings settings.PostgresSettings) pgx.Conn {
+var dropUsersTableQuery string = "drop table users"
+
+func GetPsqlConnection(settings settings.PostgresSettings) *pgx.Conn {
 	connString := fmt.Sprintf(
 		"postgres://%s:%s@%s:%d/%s",
 		settings.POSTGRES_USER,
@@ -31,12 +34,24 @@ func GetPsqlConnection(settings settings.PostgresSettings) pgx.Conn {
 	return conn
 }
 
-func CreateUsersTable(conn pgx.Conn) {
+func CreateUsersTable(conn *pgx.Conn) {
 	// todo: logging
-	var result string
-	err := conn.QueryRow(createUsersTable).Scan(&result)
+	err := conn.Ping(context.Background())
+	if err != nil {
+		fmt.Println("PING FAIL")
+		fmt.Println(err)
+	}
+	res, err := conn.Exec(context.Background(), createUsersTable)
 	if err != nil {
 		fmt.Println("Woops, error during creating users table.")
 	}
-	fmt.Println(result)
+	fmt.Println(res)
+}
+
+func DropUsersTable(conn *pgx.Conn) {
+	res, err := conn.Exec(context.Background(), dropUsersTableQuery)
+	if err != nil {
+		fmt.Println("Woops, error during dropping users table.")
+	}
+	fmt.Println(res)
 }

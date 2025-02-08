@@ -1,23 +1,36 @@
 package users
 
-import "testing"
-import "github.com/google/uuid"
+import (
+	"context"
+	"testing"
 
-import "github.com/muse/users"
-import "github.com/muse/settings"
+	"github.com/google/uuid"
+	"github.com/muse/common"
+	"github.com/muse/users"
+)
 
 func TestGetPsqlConnection(t *testing.T) {
-	conn := users.GetPsqlConnection(settings.AppSettings.PostgresSettings)
+	conn := common.GetPsqlConnection()
+	defer conn.Close(context.Background())
 	users.CreateUsersTable(conn)
-	userRepo := users.NewUserRepository(conn)
+	userRepository := users.NewUserRepository(conn, context.Background())
 
 	user := users.NewUser(
 		uuid.New(),
 		"dummy_username",
 		"dummy_password",
 	)
-	userRepo.Create(user)
-	// query for user (can be Repo layer)
+	err := userRepository.Create(user)
+	if err != nil {
+		t.Fatal("Unexpected error")
+	}
+	userReturned, err := userRepository.Get(user.Id)
+	if err != nil {
+		t.Fatal("Unexpected error")
+	}
 
-	// teardown (drop db)
+	if userReturned != user {
+		t.Fatalf("Incorrect result. \n Expected: %s \n Got: %s", user, userReturned)
+	}
+	users.DropUsersTable(conn)
 }
