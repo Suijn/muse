@@ -12,7 +12,6 @@ import (
 func TestGetPsqlConnection(t *testing.T) {
 	conn := common.GetPsqlConnection()
 	defer conn.Close(context.Background())
-	users.CreateUsersTable(conn)
 	userRepository := users.NewUserRepository(conn, context.Background())
 
 	user := users.NewUser(
@@ -32,5 +31,5 @@ func TestGetPsqlConnection(t *testing.T) {
 	if userReturned != user {
 		t.Fatalf("Incorrect result. \n Expected: %s \n Got: %s", user, userReturned)
 	}
-	users.DropUsersTable(conn)
+	users.CleanUsersTable(conn)
 }

@@ -7,9 +7,14 @@ ARG GROUP=app
 RUN adduser $USER \
 && addgroup $USER $GROUP
 
+# DBMate
+RUN curl -fsSL -o /usr/local/bin/dbmate https://github.com/amacneil/dbmate/releases/latest/download/dbmate-linux-amd64
+RUN chmod +x /usr/local/bin/dbmate
+
 FROM base AS build
 COPY --chown=$USER:$GROUP go.mod go.mod
 COPY --chown=$USER:$GROUP go.sum go.sum
+COPY --chown=$USER:$GROUP db db
 COPY --chown=$USER:$GROUP users users
 COPY --chown=$USER:$GROUP common common
 COPY --chown=$USER:$GROUP main.go main.go
