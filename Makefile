@@ -1,13 +1,13 @@
 .PHONY: build-server build-tests run-server run-tests
 
-build-server:
-	docker compose build --no-cache server
+build-api:
+	docker compose build --no-cache api
 
 build-tests:
 	docker compose build --no-cache tests
 
-run-server:
-	docker compose up server 
+run-api:
+	docker compose up api
 
 run-tests:
 	docker compose up tests

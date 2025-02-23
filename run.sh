@@ -1,10 +1,10 @@
 #!/bin/bash
 
-if [ "$1" = "server" ]; then
+if [ "$1" = "api" ]; then
   echo Running DB migrations
   dbmate up
-  echo Running server
-  ./muse
+  echo Running api
+  ./api
 elif [ "$1" = "test" ]; then
   echo Running DB migrations
   dbmate up

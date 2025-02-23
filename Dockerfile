@@ -17,9 +17,9 @@ COPY --chown=$USER:$GROUP go.sum go.sum
 COPY --chown=$USER:$GROUP db db
 COPY --chown=$USER:$GROUP users users
 COPY --chown=$USER:$GROUP common common
-COPY --chown=$USER:$GROUP main.go main.go
+COPY --chown=$USER:$GROUP cmd cmd
 COPY --chown=$USER:$GROUP run.sh run.sh
-RUN go build -o muse
+RUN go build -o api cmd/api/main.go
 
 FROM build AS buildtest
 COPY --chown=$USER:$GROUP tests tests
@@ -27,9 +27,9 @@ COPY --chown=$USER:$GROUP tests tests
 FROM build AS setuser
 USER $USER
 
-FROM setuser AS runserver
+FROM setuser AS runapi
 ENTRYPOINT ["./run.sh"]
-CMD ["server"]
+CMD ["api"]
 
 FROM buildtest as runtests
 ENTRYPOINT ["./run.sh"]

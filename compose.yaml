@@ -1,9 +1,9 @@
 services:
-  server:
-    image: muse-server
+  api:
+    image: muse-api
     build: 
       context: .
-      target: runserver
+      target: runapi
     environment:
       POSTGRES_HOST: postgres
       POSTGRES_PASSWORD: postgres
@@ -13,6 +13,8 @@ services:
       DATABASE_URL: "postgres://postgres:postgres@postgres:5432/muse?sslmode=disable"
     depends_on:
       - postgres
+    ports:
+      - 3000:3000
     
   tests:
     image: muse-tests
