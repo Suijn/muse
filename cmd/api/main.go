@@ -1,11 +1,14 @@
 package main
 
-import "fmt"
-import "net/http"
-import "github.com/go-chi/chi/v5"
-import "github.com/go-chi/chi/v5/middleware"
+import (
+	"fmt"
+	"net/http"
 
-import "github.com/muse/users"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
+	"github.com/muse/common"
+	"github.com/muse/users"
+)
 
 func run_web_server() {
 	fmt.Println("Starting server")
@@ -13,7 +16,7 @@ func run_web_server() {
 	r := chi.NewRouter()
 	r.Use(middleware.RequestID)
 	r.Use(middleware.Logger)
-	r.Use(middleware.Recoverer)
+	r.Use(common.CustomRecoverer)
 
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Hi!"))

@@ -2,8 +2,9 @@ package users
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
+
+	"github.com/muse/common"
 )
 
 type CreateUserIn struct {
@@ -22,21 +23,11 @@ func CreateUserView(w http.ResponseWriter, r *http.Request) {
 	schema := CreateUserIn{}
 	err := decoder.Decode(&schema)
 	if err != nil {
-		// This is still a client error.
-		// Data should be parseable.
-		// todo: create middleware for IncorrectPayload
-		data := `{"details": "malformed body"}`
-		w.WriteHeader(400)
-		w.Write([]byte(data))
-		return
+		panic(common.ClientError{Detail: "incorrect payload"})
 	}
 
 	if schema.Username == nil || schema.Password == nil {
-		// todo: create middleware for IncorrectPayload
-		data := `{"details": "incorrect body"}`
-		w.WriteHeader(400)
-		w.Write([]byte(data))
-		return
+		panic(common.ClientError{Detail: "incorrect payload"})
 	}
 
 	userRepository := getUserRepository()
@@ -44,17 +35,15 @@ func CreateUserView(w http.ResponseWriter, r *http.Request) {
 
 	err = CreateUser(userRepository, idFactory, *schema.Username, *schema.Password)
 	if err != nil {
-		fmt.Println(err)
-		return
+		panic(err)
 	}
 
 	respData := CreateUserOut{Status: "created"}
 	resp, err := json.Marshal(respData)
 	if err != nil {
-		// todo: create middleware for UnrecoverableError (or UnexpectedError)
-		panic(err)
+		panic(common.UnrecoverableError{Detail: "internal server error"})
 	}
 
 	w.WriteHeader(201)
-	w.Write([]byte(resp))
+	w.Write(resp)
 }

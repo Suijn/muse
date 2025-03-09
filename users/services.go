@@ -10,6 +10,9 @@ func CreateUser(
 	err := userRepository.Create(user)
 	if err != nil {
 		// todo: switch for errors.
+		//// a) Timeouts?
+		//// b) Unique constraints -> client error (409 Conflict)
+
 		// todo: logging.
 		return CreateUserFailed{}
 	}
